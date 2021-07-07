@@ -1,0 +1,28 @@
+loopback0: 10.1.1.101/32
+loopback1: 10.1.1.200/32
+router_id: 10.1.1.101
+eth1: 10.1.10.2/30
+eth2: 10.1.10.10/30
+eth3: 10.1.10.18/30
+eth4: 10.1.10.26/30
+
+
+L3_interfaces:
+- { interface: Ethernet1/1, descr: Underlay_dc1-leaf-001_Ethernet1/1 }
+- { interface: Ethernet1/2, descr: Underlay_dc1-leaf-002_Ethernet1/1 }
+- { interface: Ethernet1/3, descr: Underlay_dc1-leaf-003_Ethernet1/1 }
+- { interface: Ethernet1/4, descr: Underlay_dc1-leaf-004_Ethernet1/1 }
+
+L3_loopbacks:
+- { interface: loopback0, descr: RID and Update Source }
+- { interface: loopback1, descr: Anycast RP }
+
+Underlay_interfaces:
+  - { underlay_int: Ethernet1/1, underlay_addr: 10.1.10.2/30, underlay_descr: Underlay_dc1-leaf-001_Ethernet1/1 }
+  - { underlay_int: Ethernet1/2, underlay_addr: 10.1.10.10/30, underlay_descr: Underlay_dc1-leaf-002_Ethernet1/1 }
+  - { underlay_int: Ethernet1/3, underlay_addr: 10.1.10.18/30, underlay_descr: Underlay_dc1-leaf-003_Ethernet1/1 }
+  - { underlay_int: Ethernet1/4, underlay_addr: 10.1.10.26/30, underlay_descr: Underlay_dc1-leaf-004_Ethernet1/1 }
+
+loopback1_rp: 10.1.1.200
+s1_loopback: 10.1.1.101
+s2_loopback: 10.1.1.102

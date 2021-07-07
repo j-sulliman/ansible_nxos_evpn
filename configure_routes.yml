@@ -1,0 +1,31 @@
+---
+
+- name: NXOS Routing Playbook
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: all
+  tasks:
+  - nxos_static_route:
+      prefix: 10.128.0.0/16
+      next_hop: 10.0.0.1
+      pref: 100
+      vrf: tenant_1
+      route_name: testing
+
+  - nxos_static_route:
+      prefix: 10.0.0.0/16
+      next_hop: 10.128.0.1
+      pref: 100
+      vrf: tenant_2
+
+  - nxos_static_route:
+      prefix: 0.0.0.0/0
+      next_hop: 10.0.0.254
+      pref: 100
+      vrf: tenant_1
+
+  - nxos_static_route:
+      prefix: 0.0.0.0/0
+      next_hop: 10.128.0.254
+      pref: 100
+      vrf: tenant_2

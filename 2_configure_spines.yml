@@ -1,0 +1,133 @@
+---
+
+- name: Configuring Spine Switches
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: spines
+  tasks:
+
+  - name: Configure BGP AS
+    nxos_bgp:
+      asn: "{{ asn }}"
+      router_id: "{{ router_id }}"
+      state: present
+
+  - name: Configure BGP AF
+    nxos_bgp_af:
+      asn: "{{ asn }}"
+      afi: ipv4
+      safi: unicast
+
+  - name: Configure iBGP neighbors
+    nxos_bgp_neighbor:
+      asn: "{{ asn }}"
+      neighbor: "{{ item.neighbor }}"
+      remote_as: "{{ item.remote_as }}"
+      update_source: "{{ item.update_source }}"
+    with_items: "{{ bgp_neighbors }}"
+
+  - name: Configure iBGP neighbor AF
+    nxos_bgp_neighbor_af:
+      asn: "{{ asn }}"
+      neighbor: "{{ item.neighbor }}"
+      afi: ipv4
+      safi: unicast
+      route_reflector_client: "true"
+      send_community: both
+    with_items: "{{ bgp_neighbors }}"
+
+
+  - name: Merge provided configuration with device configuration.
+    nxos_l3_interfaces:
+      config:
+      - name: loopback1
+        ipv4:
+        - address: "{{ loopback1 }}"
+    with_items: "{{L3_interfaces}}"
+    tags: Underlay
+
+
+  - name: Create Layer 3 Interfaces
+    nxos_interfaces:
+      config:
+      - name: "{{ item.interface }}"
+        description: "{{ item.descr }}"
+        mode: layer3
+        enabled: true
+      state: merged
+    with_items: "{{L3_interfaces}}"
+    tags: multicast
+
+
+  - name: Set interface IPv4 address on underlay
+    nxos_l3_interfaces:
+      config:
+      - name: "{{ item.underlay_int }}"
+        ipv4:
+        - address: "{{ item.underlay_addr }}"
+    with_items: "{{Underlay_interfaces}}"
+    tags: Underlay
+
+
+
+  - name: Create Anycast RP interface
+    cisco.nxos.nxos_interfaces:
+      config:
+      - name: loopback1
+        description: Anycast RP interface
+        enabled: true
+      state: merged
+
+  - name: Configure PIM Loopbacks
+    nxos_pim_interface:
+      interface: "{{ item.interface }}"
+      sparse: true
+    with_items: "{{L3_loopbacks}}"
+    tags: multicast
+
+  - name: Configure PIM int
+    nxos_pim_interface:
+      interface: "{{ item.interface }}"
+      sparse: true
+    with_items: "{{L3_interfaces}}"
+    tags: multicast
+
+  - name: Enable OSPF on interface
+    cisco.nxos.nxos_ospf_interfaces:
+      config:
+        - name: "{{ item.interface }}"
+          address_family:
+          - afi: ipv4
+            processes:
+            - process_id: "1"
+              area:
+                area_id: 0.0.0.0
+                secondaries: False
+    with_items: "{{L3_interfaces}}"
+    tags: ospf
+
+  - name: Enable OSPF on Lo1
+    cisco.nxos.nxos_ospf_interfaces:
+      config:
+        - name: "{{ item.interface }}"
+          address_family:
+          - afi: ipv4
+            processes:
+            - process_id: "1"
+              area:
+                area_id: 0.0.0.0
+                secondaries: False
+    with_items: "{{L3_interfaces}}"
+    tags: ospf
+
+  - name: Configure PIM RP
+    nxos_pim_rp_address:
+      rp_address: "{{ loopback1_rp }}"
+    tags: multicast
+
+  - name: Configure Anycast RP
+    nxos_config:
+      lines:
+       - "ip pim anycast-rp {{ loopback1_rp }} {{ s1_loopback }}"
+       - "ip pim anycast-rp {{ loopback1_rp}} {{ s2_loopback }}"
+    tags: multicast

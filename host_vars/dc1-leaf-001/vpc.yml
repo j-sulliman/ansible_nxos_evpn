@@ -1,0 +1,12 @@
+vpc_domain: 12
+vpc_pkl_dest: 192.168.200.14
+vpc_pkl_src: 192.168.200.13
+vpc_pkl_vrf: management
+role_priority: 1000
+system_priority: 2000
+peer_gw: true
+auto_recovery: true
+
+vpc_interfaces:
+  - { vpc_domain: 12, pkl_dest: 192.168.200.15, pkl_src: 192.168.200.14, pkl_vrf: management }
+  - { underlay_int: Ethernet1/2, underlay_addr: 10.1.10.5/30, underlay_descr: Underlay_dc1-spine-002_Ethernet1/1 }

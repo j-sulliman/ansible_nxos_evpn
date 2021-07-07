@@ -1,0 +1,98 @@
+---
+
+- name: Network Getting Started First Playbook Extended
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: all
+  tasks:
+
+    - name: Create snapshot
+      nxos_snapshot:
+        action: create
+        snapshot_name: Ansible_snapshot
+        description: Done with Ansible
+        save_snapshot_locally: true
+
+    - name: remove configuration
+      nxos_system:
+        state: absent
+
+    - name: configure hostname and domain-name
+      nxos_system:
+        hostname: "{{ hostname }}"
+        domain_name: test.example.com
+
+
+    - name: configure name servers
+      nxos_system:
+        name_servers:
+          - 8.8.8.8
+          - 8.8.4.4
+
+    - name: configure name servers with VRF support
+      nxos_system:
+        name_servers:
+          - { server: 8.8.8.8, vrf: management }
+          - { server: 8.8.4.4, vrf: management }
+
+
+    - name: Ensure BGP is enabled
+      nxos_feature:
+        feature: bgp
+        state: enabled
+
+    - name: Ensure ospf is enabled
+      nxos_feature:
+        feature: ospf
+        state: enabled
+
+    - name: Ensure Interface VLAN is enabled
+      nxos_feature:
+        feature: interface-vlan
+        state: enabled
+
+    - name: Ensure PIM is enabled
+      nxos_feature:
+        feature: pim
+        state: enabled
+
+    - name: Ensure VN Segment is enabled
+      nxos_feature:
+        feature: vn-segment-vlan-based
+        state: enabled
+
+    - name: Ensure NV Overlay is enabled
+      nxos_feature:
+        feature: nv overlay
+        state: enabled
+
+    - name: Enable EVPN Control Plane
+      nxos_evpn_global:
+        nv_overlay_evpn: true
+
+
+    - name: Merge provided configuration with device configuration.
+      nxos_l3_interfaces:
+        config:
+        - name: loopback0
+          ipv4:
+          - address: "{{ loopback0 }}"
+        state: merged
+
+
+    - name: Create OSPF instance
+      nxos_ospf:
+        ospf: 1
+        state: present
+
+    - name: Enable OSPF on interface
+      cisco.nxos.nxos_ospf_interfaces:
+        config:
+          - name: loopback0
+            address_family:
+            - afi: ipv4
+              processes:
+              - process_id: "1"
+                area:
+                  area_id: 0.0.0.0
+                  secondaries: False

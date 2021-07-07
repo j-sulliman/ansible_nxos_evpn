@@ -1,0 +1,29 @@
+---
+
+- name: Configuring Leaf Switches
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: leafs
+  tasks:
+    - name: Configure BGP EVPN
+      nxos_bgp_af:
+       asn: "{{ asn }}"
+       afi: l2vpn
+       safi: evpn
+      tags: evpn
+    - name: Configure iBGP neighbor EVPN AF
+      nxos_bgp_neighbor_af:
+       asn: "{{ asn }}"
+       neighbor: "{{ item.neighbor }}"
+       afi: l2vpn
+       safi: evpn
+       send_community: both
+      with_items: "{{ bgp_neighbors }}"
+      tags: evpn
+    - name: Configure L2VNI RD/RT
+      nxos_evpn_vni:
+       vni: "{{ item.vni }}"
+       route_distinguisher: auto
+       route_target_both: auto
+      with_items: "{{ L2VNI }}"
+      tags: evpn

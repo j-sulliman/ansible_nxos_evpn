@@ -1,0 +1,1 @@
+{'TABLE_snapshot': {'ROW_snapshot': [{'file_name': 'interface.xml', 'snap_name': 'Ansible_snapshot'}, {'file_name': 'route-summary.xml', 'snap_name': 'Ansible_snapshot'}, {'file_name': 'routev6-summary.xml', 'snap_name': 'Ansible_snapshot'}, {'file_name': 'vpc.xml', 'snap_name': 'Ansible_snapshot'}]}}
