@@ -6,38 +6,35 @@
   hosts: spines
   tasks:
 
-  - name: Configure BGP AS
-    nxos_bgp:
-      asn: "{{ asn }}"
-      router_id: "{{ router_id }}"
-      state: present
-
-  - name: Configure BGP AF
-    nxos_bgp_af:
-      asn: "{{ asn }}"
-      afi: ipv4
-      safi: unicast
-
-  - name: Configure iBGP neighbors
-    nxos_bgp_neighbor:
-      asn: "{{ asn }}"
-      neighbor: "{{ item.neighbor }}"
-      remote_as: "{{ item.remote_as }}"
-      update_source: "{{ item.update_source }}"
+  - name: Configure Leaf iBGP neighbours
+    cisco.nxos.nxos_bgp_global:
+      config:
+        as_number: "{{ asn }}"
+        router_id: "{{ router_id }}"
+        log_neighbor_changes: True
+        neighbors:
+          - neighbor_address: "{{ item.neighbor }}"
+            remote_as: "{{ item.remote_as }}"
+            description: Leaf iBGP Neighbours
+            update_source: "{{ item.update_source }}"
     with_items: "{{ bgp_neighbors }}"
+
 
   - name: Configure iBGP neighbor AF
-    nxos_bgp_neighbor_af:
-      asn: "{{ asn }}"
-      neighbor: "{{ item.neighbor }}"
-      afi: ipv4
-      safi: unicast
-      route_reflector_client: "true"
-      send_community: both
+    cisco.nxos.nxos_bgp_neighbor_address_family:
+      config:
+        as_number: "{{ asn }}"
+        neighbors:
+          - neighbor_address: "{{ item.neighbor }}"
+            address_family:
+              - afi: ipv4
+                safi: unicast
+                route_reflector_client: yes
+                send_community:
+                  both: yes
     with_items: "{{ bgp_neighbors }}"
 
-
-  - name: Merge provided configuration with device configuration.
+  - name: Create Loopback1 Interface
     nxos_l3_interfaces:
       config:
       - name: loopback1
@@ -117,7 +114,7 @@
               area:
                 area_id: 0.0.0.0
                 secondaries: False
-    with_items: "{{L3_interfaces}}"
+    with_items: "{{L3_loopbacks}}"
     tags: ospf
 
   - name: Configure PIM RP

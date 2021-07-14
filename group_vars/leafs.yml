@@ -4,9 +4,39 @@ bgp_neighbors:
   - { remote_as: 65000, neighbor: 10.1.1.101, update_source: Loopback0 }
   - { remote_as: 65000, neighbor: 10.1.1.102, update_source: Loopback0 }
 
-L2VNI:
-  - { vlan_id: 140, vni: 50140, ip_add: 172.21.140.1/24, vlan_name: L2-VNI-140-Tenant1, mcast: 239.0.0.140 }
-  - { vlan_id: 141, vni: 50141, ip_add: 172.21.141.1/24, vlan_name: L2-VNI-141-Tenant1, mcast: 239.0.0.141 }
+L2VNI_Tenant1:
+  - { vlan_id: 10, vni: 50010, ip_add: 10.1.10.1/24, vlan_name: L2-VNI-10-Tenant1, mcast: 239.0.0.10 }
+  - { vlan_id: 11, vni: 50011, ip_add: 10.1.11.1/24, vlan_name: L2-VNI-11-Tenant1, mcast: 239.0.0.11 }
+  - { vlan_id: 12, vni: 50012, ip_add: 10.1.12.1/24, vlan_name: L2-VNI-12-Tenant1, mcast: 239.0.0.12 }
+  - { vlan_id: 13, vni: 50013, ip_add: 10.1.13.1/24, vlan_name: L2-VNI-13-Tenant1, mcast: 239.0.0.13 }
+  - { vlan_id: 14, vni: 50014, ip_add: 10.1.14.1/24, vlan_name: L2-VNI-14-Tenant1, mcast: 239.0.0.14 }
+  - { vlan_id: 15, vni: 50015, ip_add: 10.1.15.1/24, vlan_name: L2-VNI-15-Tenant1, mcast: 239.0.0.15 }
+  - { vlan_id: 16, vni: 50016, ip_add: 10.1.16.1/24, vlan_name: L2-VNI-16-Tenant1, mcast: 239.0.0.16 }
+  - { vlan_id: 17, vni: 50017, ip_add: 10.1.17.1/24, vlan_name: L2-VNI-17-Tenant1, mcast: 239.0.0.17 }
+  - { vlan_id: 18, vni: 50018, ip_add: 10.1.18.1/24, vlan_name: L2-VNI-18-Tenant1, mcast: 239.0.0.18 }
+  - { vlan_id: 19, vni: 50019, ip_add: 10.1.19.1/24, vlan_name: L2-VNI-19-Tenant1, mcast: 239.0.0.19 }
+  - { vlan_id: 20, vni: 50020, ip_add: 10.1.20.1/24, vlan_name: L2-VNI-20-Tenant1, mcast: 239.0.0.20 }
+  - { vlan_id: 21, vni: 50021, ip_add: 10.1.21.1/24, vlan_name: L2-VNI-21-Tenant1, mcast: 239.0.0.21 }
+  - { vlan_id: 22, vni: 50022, ip_add: 10.1.22.1/24, vlan_name: L2-VNI-22-Tenant1, mcast: 239.0.0.22 }
+  - { vlan_id: 23, vni: 50023, ip_add: 10.1.23.1/24, vlan_name: L2-VNI-23-Tenant1, mcast: 239.0.0.23 }
 
-L3VNI:
+L2VNI_Tenant2:
+  - { vlan_id: 110, vni: 50110, ip_add: 10.1.110.1/24, vlan_name: L2-VNI-110-Tenant2, mcast: 239.0.0.110 }
+  - { vlan_id: 111, vni: 50111, ip_add: 10.1.111.1/24, vlan_name: L2-VNI-111-Tenant2, mcast: 239.0.0.111 }
+  - { vlan_id: 112, vni: 50112, ip_add: 10.1.112.1/24, vlan_name: L2-VNI-112-Tenant2, mcast: 239.0.0.112 }
+  - { vlan_id: 113, vni: 50113, ip_add: 10.1.113.1/24, vlan_name: L2-VNI-113-Tenant2, mcast: 239.0.0.113 }
+  - { vlan_id: 114, vni: 50114, ip_add: 10.1.114.1/24, vlan_name: L2-VNI-114-Tenant2, mcast: 239.0.0.114 }
+  - { vlan_id: 115, vni: 50115, ip_add: 10.1.115.1/24, vlan_name: L2-VNI-115-Tenant2, mcast: 239.0.0.115 }
+  - { vlan_id: 116, vni: 50116, ip_add: 10.1.116.1/24, vlan_name: L2-VNI-116-Tenant2, mcast: 239.0.0.116 }
+  - { vlan_id: 117, vni: 50117, ip_add: 10.1.117.1/24, vlan_name: L2-VNI-117-Tenant2, mcast: 239.0.0.117 }
+  - { vlan_id: 118, vni: 50118, ip_add: 10.1.118.1/24, vlan_name: L2-VNI-118-Tenant2, mcast: 239.0.0.118 }
+  - { vlan_id: 119, vni: 50119, ip_add: 10.1.119.1/24, vlan_name: L2-VNI-119-Tenant2, mcast: 239.0.0.119 }
+  - { vlan_id: 120, vni: 50120, ip_add: 10.1.120.1/24, vlan_name: L2-VNI-120-Tenant2, mcast: 239.0.0.120 }
+  - { vlan_id: 121, vni: 50121, ip_add: 10.1.121.1/24, vlan_name: L2-VNI-121-Tenant2, mcast: 239.0.0.121 }
+  - { vlan_id: 122, vni: 50122, ip_add: 10.1.122.1/24, vlan_name: L2-VNI-122-Tenant2, mcast: 239.0.0.122 }
+  - { vlan_id: 123, vni: 50123, ip_add: 10.1.123.1/24, vlan_name: L2-VNI-123-Tenant2, mcast: 239.0.0.123 }
+
+L3VNI_Tenant1:
   - { vlan_id: 999, vlan_name: L3-VNI-999-Tenant1, vni: 50999 }
+L3VNI_Tenant2:
+  - { vlan_id: 1000, vlan_name: L3-VNI-1000-Tenant2, vni: 51000 }

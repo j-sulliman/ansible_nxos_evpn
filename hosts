@@ -10,10 +10,10 @@ ansible_password=Cisco123!
 ansible_python_interpreter=venv/bin/python3.9
 
 [leafs]
-dc1-leaf-001 ansible_host=192.168.200.114 hostname=dc1-leaf-001
-dc1-leaf-002 ansible_host=192.168.200.115 hostname=dc1-leaf-002
-dc1-leaf-003 ansible_host=192.168.200.116 hostname=dc1-leaf-003
-dc1-leaf-004 ansible_host=192.168.200.117 hostname=dc1-leaf-004
+dc1-leaf-001 ansible_host=192.168.200.113 hostname=dc1-leaf-001
+dc1-leaf-002 ansible_host=192.168.200.114 hostname=dc1-leaf-002
+dc1-leaf-003 ansible_host=192.168.200.115 hostname=dc1-leaf-003
+dc1-leaf-004 ansible_host=192.168.200.116 hostname=dc1-leaf-004
 
 [leafs:vars]
 ansible_become=yes
@@ -25,8 +25,8 @@ ansible_python_interpreter=venv/bin/python3.9
 
 
 [spines]
-dc1-spine-001 ansible_host=192.168.200.118 hostname=dc1-spine-001 loopback=10.1.1.101/32
-dc1-spine-002 ansible_host=192.168.200.113 hostname=dc1-spine-002 loopback=10.1.1.102/32
+dc1-spine-001 ansible_host=192.168.200.117 hostname=dc1-spine-001 loopback=10.1.1.101/32
+dc1-spine-002 ansible_host=192.168.200.118 hostname=dc1-spine-002 loopback=10.1.1.102/32
 
 [spines:vars]
 ansible_become=yes

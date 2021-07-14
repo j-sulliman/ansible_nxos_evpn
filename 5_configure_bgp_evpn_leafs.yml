@@ -20,10 +20,17 @@
        send_community: both
       with_items: "{{ bgp_neighbors }}"
       tags: evpn
-    - name: Configure L2VNI RD/RT
+    - name: Configure L2VNI_Tenant2 RD/RT
       nxos_evpn_vni:
        vni: "{{ item.vni }}"
        route_distinguisher: auto
        route_target_both: auto
-      with_items: "{{ L2VNI }}"
+      with_items: "{{ L2VNI_Tenant2 }}"
+      tags: evpn
+    - name: Configure L2VNI_Tenant1 RD/RT
+      nxos_evpn_vni:
+       vni: "{{ item.vni }}"
+       route_distinguisher: auto
+       route_target_both: auto
+      with_items: "{{ L2VNI_Tenant1 }}"
       tags: evpn

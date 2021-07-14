@@ -1,0 +1,135 @@
+---
+
+- name: Configuring Leaf Switches
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: leafs
+  tasks:
+    - name: (1) Check Running Version
+      register: version_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: show version
+        wait_for:
+          - result[0] contains bootflash:///nxos.9.3.7.bin
+    - debug: var=version_output.stdout_lines
+
+
+    - name: (2) Interface Status
+      register: interface_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: sh ip int br | exclude unass
+        wait_for:
+          - result[0] contains Lo0
+    - debug: var=interface_output.stdout_lines
+
+    - name: (3) Enabled Features
+      register: feature_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: show feature | grep enabled
+        wait_for:
+          - result[0] contains interface-vlan
+    - debug: var=feature_output.stdout_lines
+
+
+    - name: (4) CDP Neighours
+      register: cdp_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: show cdp neighbors | excl mgmt0
+        wait_for:
+          - result[0] contains Eth1/1
+    - debug: var=cdp_output.stdout_lines
+
+
+    - name: (5) VLAN Status
+      register: vlan_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: show vlan
+        wait_for:
+          - result[0] contains active
+    - debug: var=vlan_output.stdout_lines
+
+
+    - name: (6) MAC Address Table
+      register: mac_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: show mac address-table | exclude sup
+        wait_for:
+          - result[0] contains MAC Address
+    - debug: var=vlan_output.stdout_lines
+
+
+    - name: (7) iBGP Neighbours
+      register: ibgp_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: show ip bgp summary
+        wait_for:
+          - result[0] contains AS number 65000
+    - debug: var=ibgp_output.stdout_lines
+
+
+    - name: (8) EVPN Neighbours
+      register: evpn_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: show bgp l2vpn evpn summary
+        wait_for:
+          - result[0] contains AS number 65000
+    - debug: var=evpn_output.stdout_lines
+
+    - name: (9) NVE Interface
+      register: nve_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: show nve interface
+        wait_for:
+          - result[0] contains VXLAN
+    - debug: var=nve_output.stdout_lines
+
+    - name: (10) Check evpn MAC and IP learning
+      register: l2route_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: show l2route evpn mac-ip all
+        wait_for:
+          - result[0] contains Orphan
+    - debug: var=l2route_output.stdout_lines
+
+    - name: (11) Check Tenant-1 Routes
+      register: Tenant1_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: show ip route vrf Tenant-1
+        wait_for:
+          - result[0] contains IP Route Table
+    - debug: var=Tenant1_output.stdout_lines
+
+    - name: (12) Check Tenant-2 Routes
+      register: Tenant2_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: show ip route vrf Tenant-2
+        wait_for:
+          - result[0] contains IP Route Table
+    - debug: var=Tenant2_output.stdout_lines
+
+    - name: (11) Connectivity
+      register: ping_output
+      cisco.nxos.nxos_command:
+        commands:
+        - command: ping 10.1.1.101
+        - command: ping 10.1.1.102
+        - command: ping 10.1.1.200
+        - command: ping 10.1.10.10 vrf Tenant-1
+        - command: ping 10.1.10.11 vrf Tenant-1
+        - command: ping 10.1.110.1 vrf Tenant-2
+        - command: ping 10.1.111.1 vrf Tenant-2
+        wait_for:
+          - result[0] contains icmp_seq
+    - debug: var=ping_output.stdout_lines

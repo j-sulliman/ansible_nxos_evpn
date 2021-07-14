@@ -1,0 +1,86 @@
+---
+
+- name: Configuring Leaf Switches
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: leafs
+  tasks:
+   - name: Configure VLAN to VNI
+     nxos_vlan:
+       vlan_id: "{{ item.vlan_id }}"
+       mapped_vni: "{{ item.vni }}"
+       name: "{{ item.vlan_name }}"
+     with_items:
+     - "{{ L2VNI_Tenant2 }}"
+     - "{{ L3VNI_Tenant2 }}"
+     tags: vxlan
+   - name: Configure Tenant VRF
+     nxos_vrf:
+       vrf: Tenant-1
+       rd:  auto
+       vni: "{{ L3VNI_Tenant2[0].vni }}"
+     tags: vxlan
+   - name: Configure VRF AF
+     nxos_vrf_af:
+       vrf: Tenant-2
+       route_target_both_auto_evpn: true
+       afi: ipv4
+     tags: vxlan
+   - name: Configure Anycast GW
+     nxos_overlay_global:
+       anycast_gateway_mac: 0000.2222.3333
+     tags: vxlan
+   - name: Configure L2VNI_Tenant2
+     nxos_interface:
+       interface: vlan"{{ item.vlan_id }}"
+     with_items: "{{ L2VNI_Tenant2 }}"
+     tags: vxlan
+   - name: Configure L3VNI_Tenant2
+     nxos_interface:
+       interface: vlan"{{ L3VNI_Tenant2[0].vlan_id }}"
+     tags: vxlan
+   - name: Assign interface to Tenant VRF
+     nxos_vrf_interface:
+       vrf: Tenant-2
+       interface: "vlan{{ item.vlan_id }}"
+     with_items:
+     - "{{ L2VNI_Tenant2 }}"
+     - "{{ L3VNI_Tenant2 }}"
+     tags: vxlan
+   - name: Set interface IPv4 address on underlay
+     nxos_l3_interface:
+       name: "vlan{{ item.vlan_id }}"
+       ipv4: "{{ item.ip_add }}"
+     with_items: "{{L2VNI_Tenant2}}"
+     tags: vxlan
+   - name: Configure L2VNI_Tenant2 SVI
+     nxos_interface:
+       interface: vlan"{{ item.vlan_id }}"
+       fabric_forwarding_anycast_gateway: true
+     with_items: "{{ L2VNI_Tenant2 }}"
+     tags: vxlan
+   - name: Configure L3VNI_Tenant2 SVI
+     nxos_interface:
+       interface: vlan"{{ L3VNI_Tenant2[0].vlan_id }}"
+       ip_forward: enable
+     tags: vxlan
+   - name: Configure VTEP Tunnel
+     nxos_vxlan_vtep:
+        interface: nve1
+        shutdown: "false"
+        source_interface: Loopback1
+        host_reachability: "true"
+     tags: vxlan
+   - name: Configure L2VNI_Tenant2 to VTEP
+     nxos_vxlan_vtep_vni:
+        interface: nve1
+        vni: "{{ item.vni }}"
+        multicast_group: "{{ item.mcast }}"
+     with_items: "{{ L2VNI_Tenant2 }}"
+     tags: vxlan
+   - name: Configure L3VNI_Tenant2 to VTEP
+     nxos_vxlan_vtep_vni:
+        interface: nve1
+        vni: "{{ L3VNI_Tenant2[0].vni }}"
+        assoc_vrf: true
+     tags: vxlan

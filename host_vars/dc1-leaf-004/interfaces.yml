@@ -3,7 +3,7 @@ loopback1: 10.1.1.114/32
 router_id: 10.1.1.4
 eth1: 10.1.10.25/30
 eth2: 10.1.10.29/30
-access_vlan: 140
+access_vlan: 10
 
 L3_interfaces:
 - { interface: Ethernet1/1, descr: Underlay_dc1-spine-001_Ethernet1/4 }
